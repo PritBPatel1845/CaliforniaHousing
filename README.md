@@ -55,27 +55,4 @@ Data preprocessing is handled via a unified `ColumnTransformer`:
 
 *Note: Final model fine-tuning was performed using `GridSearchCV`.*
 
-## 💻 How to Run
-1.  **Clone the repo:**
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/california-housing-ml.git](https://github.com/YOUR_USERNAME/california-housing-ml.git)
-    cd california-housing-ml
-    ```
 
-2.  **Install dependencies:**
-    ```bash
-    pip install pandas numpy matplotlib scikit-learn jupyter
-    ```
-
-3.  **Launch Jupyter Notebook:**
-    ```bash
-    jupyter notebook
-    ```
-    Open `California_Housing.ipynb` and run the cells.
-
-## 🤝 Acknowledgments
-* Dataset originally from the 1990 California Census.
-* Project structure guided by Aurélien Géron's *Hands-On Machine Learning* book.
-
----
-**Author:** [Your Name]

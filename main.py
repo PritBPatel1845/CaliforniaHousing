@@ -36,7 +36,7 @@ print(data["ocean_proximity"].value_counts())
 #data visualization
 
 ## Scatter plot of latitude vs longitude, colored by median house value
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(10, 7))
 plt.scatter(data['longitude'], data['latitude'], alpha=0.4,
             s=data['population']/100, c=data['median_house_value'], cmap='jet', label='Population')
 plt.colorbar(label='Median House Value')
@@ -47,8 +47,8 @@ plt.legend()
 plt.show()
 
 ## Histogram of all numerical attributes
-plt.figure(figsize=(20, 15))
-data.hist(bins=50, figsize=(20,15))
+plt.figure(figsize=(10, 7))
+data.hist(bins=50, figsize=(12, 8))
 plt.show()
 
 data["income_cat"]= pd.cut(data["median_income"],
@@ -61,25 +61,27 @@ plt.ylabel('Number of Households')
 plt.title('Distribution of Income Categories')
 plt.show()
 
-#train test split using stratified sampling based on income category
+# Split the data into training and testing sets based on income category
+
 from sklearn.model_selection import StratifiedShuffleSplit
+
 split = StratifiedShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
+strat_split=[]
 for train_index, test_index in split.split(data, data['income_cat']):
     strat_train_set = data.loc[train_index]
     strat_test_set = data.loc[test_index]
-print("\n----------- STRATIFIED TRAINING SET INFO -----------")
-print(strat_train_set['income_cat'].value_counts() / len(strat_train_set))
-print("\n----------- STRATIFIED TEST SET INFO -----------")
-print(strat_test_set['income_cat'].value_counts() / len(strat_test_set))
+    strat_split.append((strat_train_set, strat_test_set))
 
-# Remove income_cat attribute so the data is back to its original state
-for set_ in (strat_train_set, strat_test_set):
-    set_.drop("income_cat", axis=1, inplace=True)
+strat_train_set, strat_test_set = strat_split[0]
 
-# Prepare the data for machine learning algorithms
-housing = strat_train_set.drop("median_house_value", axis=1)
-housing_labels = strat_train_set["median_house_value"].copy()
-housing_num = housing.drop("ocean_proximity", axis=1)
-housing_cat = housing[["ocean_proximity"]]
-housing_cat_encoded = pd.get_dummies(housing_cat, drop_first=True)
-housing_prepared = pd.concat([housing_num, housing_cat_encoded], axis=1)
+strat_train_set.value_counts('income_cat').sort_index().plot(kind='bar', figsize=(10,6))
+plt.xlabel('Income Category')
+plt.ylabel('Number of Households')
+plt.title('Stratified Training Set Income Categories')
+plt.show()
+
+print("values count of train set", strat_train_set['income_cat'].value_counts())
+print("values count of test set", strat_test_set['income_cat'].value_counts())
+
+strat_train_set.info()
+strat_test_set.info()
