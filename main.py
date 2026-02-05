@@ -95,3 +95,47 @@ for set_ in (strat_train_set, strat_test_set):
 #explore and visualize data to get better understanding of data relationships
 
 data = strat_train_set.copy()
+data.plot(kind='scatter', x='longitude', y='latitude', alpha=0.4,
+          s=data['population']/100, label='Population', figsize=(10,7),
+          c=data['median_house_value'], cmap=plt.get_cmap('jet'), colorbar=True)
+plt.legend()
+plt.show()
+
+corr_data = data.drop("ocean_proximity", axis=1)
+# Calculate the correlation matrix
+corr_matrix = corr_data.corr()
+print("\n----------- CORRELATION MATRIX -----------")
+print(corr_matrix["median_house_value"].sort_values(ascending=False))
+
+# Scatter plot to visualize correlation between median_income and median_house_value
+data.plot(kind='scatter', x='median_income', y='median_house_value', alpha=0.1)
+plt.xlabel('Median Income')
+plt.ylabel('Median House Value')
+plt.title('Median Income vs. Median House Value')
+plt.show()
+
+data.info()
+
+# Prepare the data for machine learning algorithms
+data = strat_train_set.drop("median_house_value", axis=1)
+data_labels = strat_train_set["median_house_value"].copy()
+print("\n----------- DATA PREPARATION -----------")
+print("Data prepared for machine learning algorithms.")
+data.info()
+data_labels.info()
+
+# preprocessing the data usibg imputation and scaling
+from sklearn.impute import SimpleImputer
+imputer = SimpleImputer(strategy="median")
+data_num = data.drop("ocean_proximity", axis=1)
+imputer.fit(data_num)
+X = imputer.transform(data_num)
+data_tr = pd.DataFrame(X, columns=data_num.columns, index=data_num.index)
+data_tr.info()
+
+# Feature Scaling
+scaler = StandardScaler()
+data_tr_scaled = scaler.fit_transform(data_tr)
+data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
+data_tr_scaled.info()   
+
