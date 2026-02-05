@@ -85,3 +85,13 @@ print("values count of test set", strat_test_set['income_cat'].value_counts())
 
 strat_train_set.info()
 strat_test_set.info()
+
+strat_train_set['income_cat'].head()
+
+# Remove income_cat attribute so the data is back to its original state
+for set_ in (strat_train_set, strat_test_set):
+    set_.drop('income_cat', axis=1, inplace=True)
+
+#explore and visualize data to get better understanding of data relationships
+
+data = strat_train_set.copy()
