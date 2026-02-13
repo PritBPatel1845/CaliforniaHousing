@@ -124,22 +124,64 @@ print("Data prepared for machine learning algorithms.")
 data.info()
 data_labels.info()
 
-# preprocessing the data usibg imputation and scaling
+#in this module book gave me inportant advise. I should create a function to do all the preprocessing steps. 
+#This is important because when I will be using the model to make predictions on new data, I will need to apply the same preprocessing steps to the new data. 
+#By creating a function, I can ensure that the same steps are applied consistently.
+
 from sklearn.impute import SimpleImputer
-imputer = SimpleImputer(strategy="median")
-data_num = data.drop("ocean_proximity", axis=1)
-imputer.fit(data_num)
-X = imputer.transform(data_num)
-data_tr = pd.DataFrame(X, columns=data_num.columns, index=data_num.index)
-data_tr.info() 
+from sklearn.preprocessing import OneHotEncoder
 
-# Encode the categorical attribute 'ocean_proximity' using one-hot encoding
-data_cat = data[["ocean_proximity"]]
-data_cat_encoded = pd.get_dummies(data_cat, drop_first=True)
-data_cat_encoded.info()
+def preprocess_data(data):
+    # preprocessing the data usibg imputation and scaling
+    imputer = SimpleImputer(strategy="median")
+    data_num = data.drop("ocean_proximity", axis=1)
+    imputer.fit(data_num)
+    X = imputer.transform(data_num)
+    data_tr = pd.DataFrame(X, columns=data_num.columns, index=data_num.index)
 
-# Feature Scaling
-scaler = StandardScaler()
-data_tr_scaled = scaler.fit_transform(data_tr)
-data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
-data_tr_scaled.info()  
+    # #using onehotencoder to build a pipeline for preprocessing the data
+    cat_encoder = OneHotEncoder()
+    data_cat_1hot = cat_encoder.fit_transform(data[["ocean_proximity"]])
+    
+    # Feature scaling
+    scaler = StandardScaler()
+    data_tr_scaled = scaler.fit_transform(data_tr)
+    data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
+
+    return data_tr_scaled, data_cat_1hot
+
+print("\n----------- PREPROCESSING DATA -----------", "\n")
+data_tr_scaled, data_cat_1hot = preprocess_data(data)
+print("Preprocessed numerical data shape:", data_tr_scaled.shape)
+print("Preprocessed categorical data shape:", data_cat_1hot.shape)
+print("info of original data:", data.info())
+print("info of labels:", data_labels.info())
+
+#lets use columntransformer to combine the numerical and categorical data into one dataset
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+# Define the column transformer to apply the appropriate transformations to numerical and categorical features
+num_attribs = data.drop("ocean_proximity", axis=1).columns
+cat_attribs = ["ocean_proximity"]
+num_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="median")),
+    ('scaler', StandardScaler())
+])
+cat_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="most_frequent")),
+    ('onehot', OneHotEncoder())
+])
+
+full_pipeline = ColumnTransformer([
+    ("num", num_pipeline, num_attribs),
+    ("cat", cat_pipeline, cat_attribs)
+])  
+
+# Apply the full pipeline to the training data
+data_prepared = full_pipeline.fit_transform(data)
+print("\n----------- FULL PIPELINE PREPARATION -----------", "\n")
+print("Preprocessed data shape after full pipeline:", data_prepared.shape)
+
+
+
