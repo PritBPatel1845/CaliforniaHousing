@@ -131,16 +131,15 @@ data_num = data.drop("ocean_proximity", axis=1)
 imputer.fit(data_num)
 X = imputer.transform(data_num)
 data_tr = pd.DataFrame(X, columns=data_num.columns, index=data_num.index)
-data_tr.info()
-
-# Feature Scaling
-scaler = StandardScaler()
-data_tr_scaled = scaler.fit_transform(data_tr)
-data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
-data_tr_scaled.info()   
+data_tr.info() 
 
 # Encode the categorical attribute 'ocean_proximity' using one-hot encoding
 data_cat = data[["ocean_proximity"]]
 data_cat_encoded = pd.get_dummies(data_cat, drop_first=True)
 data_cat_encoded.info()
 
+# Feature Scaling
+scaler = StandardScaler()
+data_tr_scaled = scaler.fit_transform(data_tr)
+data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
+data_tr_scaled.info()  
