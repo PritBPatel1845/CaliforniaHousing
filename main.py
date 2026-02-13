@@ -139,3 +139,8 @@ data_tr_scaled = scaler.fit_transform(data_tr)
 data_tr_scaled = pd.DataFrame(data_tr_scaled, columns=data_tr.columns, index=data_tr.index)
 data_tr_scaled.info()   
 
+# Encode the categorical attribute 'ocean_proximity' using one-hot encoding
+data_cat = data[["ocean_proximity"]]
+data_cat_encoded = pd.get_dummies(data_cat, drop_first=True)
+data_cat_encoded.info()
+
