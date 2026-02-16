@@ -183,5 +183,34 @@ data_prepared = full_pipeline.fit_transform(data)
 print("\n----------- FULL PIPELINE PREPARATION -----------", "\n")
 print("Preprocessed data shape after full pipeline:", data_prepared.shape)
 
+# Now we can train a machine learning model using the preprocessed data. For example, we can use a Random Forest Regressor to predict the median house value.
+from sklearn.ensemble import RandomForestRegressor
+# Train a Random Forest Regressor
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(data_prepared, data_labels)
+print("\n----------- MODEL TRAINING -----------", "\n")
+print("Model trained successfully.")
 
+predictions = model.predict(data_prepared)
+print("\n----------- MODEL PREDICTIONS -----------", "\n")
+print("Predictions on training data:", predictions[:5])
 
+# Evaluate the model using Mean Absolute Error
+from sklearn.metrics import mean_absolute_error
+mae = mean_absolute_error(data_labels, predictions)
+print("\n----------- MODEL EVALUATION -----------", "\n")
+print("Mean Absolute Error on training data:", mae)
+
+#use rmse to evaluate the model
+from sklearn.metrics import mean_squared_error
+rmse = np.sqrt(mean_squared_error(data_labels, predictions))
+print("Root Mean Squared Error on training data:", rmse)
+
+#cross validate the model using cross_val_score
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model, data_prepared, data_labels, scoring="neg_mean_squared_error", cv=10)
+rmse_scores = np.sqrt(-scores)
+print("\n----------- CROSS-VALIDATION SCORES -----------", "\n")
+print("Cross-validation RMSE scores:", rmse_scores)
+print("Mean RMSE:", rmse_scores.mean())
+print("Standard Deviation of RMSE:", rmse_scores.std()) 
