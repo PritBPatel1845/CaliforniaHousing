@@ -159,3 +159,35 @@ print("info of labels:", data_labels.info())
 
 # so I have tried on my own to build a transformation pipeline for the data. I have used imputation to fill in the missing values, onehotencoder to encode the categorical variable, and standardscaler to scale the numerical variables.
 # but I failed, So I decided to use book again and going back to follow book. 
+
+# transformation Pipeline
+#lets use columntransformer to combine the numerical and categorical data into one dataset
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+
+# Define the column transformer to apply the appropriate transformations to numerical and categorical features
+num_attribs = data.drop("ocean_proximity", axis=1).columns
+cat_attribs = ["ocean_proximity"]
+num_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="median")),
+    ('scaler', StandardScaler())
+])
+cat_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="most_frequent")),
+    ('onehot', OneHotEncoder())
+])
+
+full_pipeline = ColumnTransformer([
+    ("num", num_pipeline, num_attribs),
+    ("cat", cat_pipeline, cat_attribs)
+])  
+
+from sklearn import set_config
+set_config(display="diagram")
+full_pipeline
+
+# Apply the full pipeline to the training data
+data_prepared = full_pipeline.fit_transform(data)
+print("\n----------- FULL PIPELINE PREPARATION -----------", "\n")
+print("Preprocessed data shape after full pipeline:", data_prepared.shape, "\n", data_prepared.dtype)
