@@ -191,3 +191,17 @@ full_pipeline
 data_prepared = full_pipeline.fit_transform(data)
 print("\n----------- FULL PIPELINE PREPARATION -----------", "\n")
 print("Preprocessed data shape after full pipeline:", data_prepared.shape, "\n", data_prepared.dtype)
+
+# Now that the data is preprocessed, we can train a machine learning model on it. Let's use a simple linear regression model to start with.
+from sklearn.linear_model import LinearRegression
+lin_reg = LinearRegression()
+lin_reg.fit(data_prepared, data_labels)
+# Now that the model is trained, we can evaluate its performance on the training data. We will use the R^2 score as our evaluation metric.
+from sklearn.metrics import r2_score
+data_predictions = lin_reg.predict(data_prepared)
+lin_mse = np.mean((data_predictions - data_labels) ** 2)
+lin_rmse = np.sqrt(lin_mse)
+lin_r2 = r2_score(data_labels, data_predictions)
+print("\n----------- LINEAR REGRESSION PERFORMANCE -----------", "\n")
+print("R^2 Score:", lin_r2)
+print("Root Mean Squared Error:", lin_rmse)
