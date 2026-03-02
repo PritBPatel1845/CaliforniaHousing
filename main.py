@@ -205,3 +205,24 @@ lin_r2 = r2_score(data_labels, data_predictions)
 print("\n----------- LINEAR REGRESSION PERFORMANCE -----------", "\n")
 print("R^2 Score:", lin_r2)
 print("Root Mean Squared Error:", lin_rmse)
+
+# lets work on the decision tree regressor now and see if we can get better performance than linear regression
+from sklearn.tree import DecisionTreeRegressor
+tree_reg = DecisionTreeRegressor(random_state=42)
+tree_reg.fit(data_prepared, data_labels)
+data_predictions_tree = tree_reg.predict(data_prepared)
+tree_mse = np.mean((data_predictions_tree - data_labels) ** 2)
+tree_rmse = np.sqrt(tree_mse)
+tree_r2 = r2_score(data_labels, data_predictions_tree)
+print("\n----------- DECISION TREE REGRESSOR PERFORMANCE -----------", "\n")
+print("R^2 Score:", tree_r2)
+print("Root Mean Squared Error:", tree_rmse)
+
+#better evaluation using cross validation
+from sklearn.model_selection import cross_val_score
+tree_scores = cross_val_score(tree_reg, data_prepared, data_labels, scoring="neg_mean_squared_error", cv=10)
+tree_rmse_scores = np.sqrt(-tree_scores)
+print("\n----------- DECISION TREE REGRESSOR CROSS-VALIDATION PERFORMANCE -----------", "\n")
+print("Cross-validated RMSE scores:", tree_rmse_scores)
+print("Mean RMSE:", tree_rmse_scores.mean())
+print("Standard Deviation of RMSE:", tree_rmse_scores.std())    
