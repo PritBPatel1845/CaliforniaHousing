@@ -49,7 +49,7 @@ Data preprocessing is handled via a unified `ColumnTransformer`:
 * **Categorical Data:** One-Hot Encoding (`OneHotEncoder`).
 
 ## 📊 Results (Example)
-* **Linear Regression RMSE:** ~$68,000 (Underfitting)
+* **Linear Regression RMSE:** ~$69050.5621 (Underfitting)
 * **Decision Tree RMSE:** ~$0.0 (Overfitting)
 * **Random Forest RMSE:** ~$50,000 (Best performance)
 
