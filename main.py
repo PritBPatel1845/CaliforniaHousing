@@ -226,3 +226,31 @@ print("\n----------- DECISION TREE REGRESSOR CROSS-VALIDATION PERFORMANCE ------
 print("Cross-validated RMSE scores:", tree_rmse_scores)
 print("Mean RMSE:", tree_rmse_scores.mean())
 print("Standard Deviation of RMSE:", tree_rmse_scores.std())    
+
+#fine tuning the model using grid search
+from sklearn.model_selection import GridSearchCV
+param_grid = [
+    {'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]},
+    {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]},
+]
+from sklearn.ensemble import RandomForestRegressor
+forest_reg = RandomForestRegressor(random_state=42)
+grid_search = GridSearchCV(estimator=forest_reg, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True)
+grid_search.fit(data_prepared, data_labels)
+print("\n----------- GRID SEARCH BEST PARAMETERS -----------", "\n")
+print("Best Parameters:", grid_search.best_params_)
+print("Best Estimator:", grid_search.best_estimator_)   
+
+# Evaluate the best model on the test set   
+final_model = grid_search.best_estimator_
+X_test = strat_test_set.drop("median_house_value", axis=1)
+y_test = strat_test_set["median_house_value"].copy()
+X_test_prepared = full_pipeline.transform(X_test)
+final_predictions = final_model.predict(X_test_prepared)
+final_mse = np.mean((final_predictions - y_test) ** 2)
+final_rmse = np.sqrt(final_mse)
+final_r2 = r2_score(y_test, final_predictions)
+print("\n----------- FINAL MODEL PERFORMANCE ON TEST SET -----------", "\n")
+print("R^2 Score:", final_r2)
+print("Root Mean Squared Error:", final_rmse)
+
