@@ -254,3 +254,8 @@ print("\n----------- FINAL MODEL PERFORMANCE ON TEST SET -----------", "\n")
 print("R^2 Score:", final_r2)
 print("Root Mean Squared Error:", final_rmse)
 
+#export the model using joblib
+import joblib
+joblib.dump(final_model, "california_housing_model.pkl")
+print("\n----------- MODEL EXPORT -----------", "\n")
+print("Model exported successfully as 'california_housing_model.pkl'.")
